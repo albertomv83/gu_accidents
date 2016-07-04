@@ -11,7 +11,8 @@ gu10 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_GU_BCN_2010.cs
 colnames(gu15)[4]<-"NK.barri"
 colnames(gu15)[10]<-"Dia.de.setmana"
 
-#delete non common columns
+#delete non common columns. gu15 doesn't have Número.de.víctimes.
+#Also (Número.de.morts+Número.de.lesionats.lleus+Número.de.lesionats.greus)==Número.de.víctimes
 gu14[,Número.de.víctimes:=NULL]
 gu13[,Número.de.víctimes:=NULL]
 gu12[,Número.de.víctimes:=NULL]
@@ -29,7 +30,30 @@ gu[!is.na(Dia.de.setmana),':='(Dia.de.setmana=mapvalues(Dia.de.setmana,
 gu[,':='(Mes.de.any=as.factor(Mes.de.any),
          Dia.de.mes=as.factor(Dia.de.mes),
          Dia.de.setmana=as.factor(Dia.de.setmana),
+         Hora.de.dia=as.factor(Hora.de.dia),
          NK.Any=as.factor(NK.Any),
          Num.postal.caption=as.factor(Num.postal.caption),
          Codi.carrer=as.factor(Codi.carrer),
+         Codi.districte=as.factor((Codi.districte)))]
+
+#read accidents causes
+gu_c15 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_CAUSES_GU_BCN_2015.csv"), encoding='UTF-8', na.strings = c("Desconegut"), sep=';'))
+gu_c14 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_CAUSES_GU_BCN_2014.csv"), encoding='UTF-8', na.strings = c("Desconegut"), sep=';'))
+gu_c13 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_CAUSES_GU_BCN_2013.csv"), encoding='UTF-8', na.strings = c("Desconegut"), sep=';'))
+gu_c12 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_CAUSES_GU_BCN_2012.csv"), encoding='UTF-8', na.strings = c("Desconegut"), sep=';'))
+gu_c11 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_CAUSES_GU_BCN_2011.csv"), encoding='UTF-8', na.strings = c("Desconegut"), sep=';'))
+gu_c10 <- data.table(read.csv(paste0(root_path,"utf8_data/ACCIDENTS_CAUSES_GU_BCN_2010.csv"), encoding='UTF-8', na.strings = c("Desconegut"), sep=';'))
+
+#merge all years of causes
+gu_c <- rbind(gu_c15,gu_c14,gu_c13,gu_c12,gu_c11,gu_c10)
+
+#clean values
+gu_c[,':='(Mes.de.any=as.factor(Mes.de.any),
+         Dia.de.mes=as.factor(Dia.de.mes),
+         Dia.setmana=as.factor(Dia.setmana),
+         Hora.de.dia=as.factor(Hora.de.dia),
+         NK.Any=as.factor(NK.Any),
+         Num.postal.caption=as.factor(Num.postal.caption),
+         Codi.carrer=as.factor(Codi.carrer),
+         Codi.barri=as.factor(Codi.barri),
          Codi.districte=as.factor((Codi.districte)))]
